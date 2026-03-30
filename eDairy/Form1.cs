@@ -8,9 +8,10 @@ namespace eDairy
         int width;
         int height;
         bool isPanelOpnd;
-        TextBox[] textBoxes;
         bool isRecordReadOnly = false;
         int buttonfunction;
+        List<Records> eRecords;
+        eDairyScapegoat eDairyDS = new eDairyScapegoat();
 
         public eDairyForm()
         {
@@ -18,30 +19,25 @@ namespace eDairy
 
             width = this.Width;
             height = this.Height;
-
-            eDairyStorage.Rows.Add("Кнопочка");
-            eDairyStorage.Rows.Add("Кнепочка");
-            eDairyStorage.Rows.Add("А это вообще что?");
-
-            eDairyStorage.Columns[0].Width = eDairyStorage.Width;
             isPanelOpnd = false;
             buttonfunction = 0;
+
+            eRecords = EdairyDBConnection.ReadFromExcel();
+            foreach (Records record in eRecords)
+            { eDairyDS.Insert(record); }
+            DesignHelper.DataGridUpdater(eRecords, eDairyStorage);
+
+            eDairyStorage.Columns[0].Width = eDairyStorage.Width;
+
+            DesignHelper.DataGridPanelCloseFix(width, height, eDairyStorage);
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            int index = e.RowIndex;
-            
-            if (e.RowIndex == 0)
-            {
-                MessageBox.Show("Все остальное тож робит робит");
-            }
-            else if (e.RowIndex == 1)
-            {
-                MessageBox.Show("Все остальное тож робит робит");
-            }
-            else
-                MessageBox.Show("Все остальное тож робит робит");
+            int index = eDairyStorage.CurrentCell.RowIndex;
+            eDairyScapegoat scapegoat = new eDairyScapegoat();
+            Records record = scapegoat.Search(index);
+            InterfaceClass.PrintRecord(record, RecordNameTxtBox, RecordTxtBox, RecordCreateDataTxtBox, RecordChangeDataTxtBox);
         }
 
         private void eDairyForm_SizeChanged(object sender, EventArgs e)
@@ -93,12 +89,16 @@ namespace eDairy
                 // Создание записи
                 case 1:
                     {
-                        string name = RecordNameTxtBox.Text;
-                        string text = RecordTxtBox.Text;
-                        string data1 = DateOnly.FromDateTime(DateTime.Now).ToString();
-                        string data2 = DateOnly.FromDateTime(DateTime.Now).ToString();
-                        string[] values = new string[] {name, text, data1, data2};
-                        EdairyMainClass.CreateRecordFunction(values);
+                        Records record = new Records
+                        {
+                            Id = eRecords.Count+1,
+                            Name = RecordNameTxtBox.Text,
+                            Text = RecordTxtBox.Text,
+                            CreatedAt = DateOnly.FromDateTime(DateTime.Now).ToString(),
+                            UpdatedAt = DateOnly.FromDateTime(DateTime.Now).ToString()
+                        };
+                        EdairyDBConnection.InsertIntoExcel(record);
+                        eDairyStorage.Rows.Add(record.Name);
                         break;
                     }
                 // Изменение записи

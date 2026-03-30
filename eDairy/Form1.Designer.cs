@@ -1,4 +1,6 @@
-﻿namespace eDairy
+﻿using eDairy.FunctionalClasses;
+
+namespace eDairy
 {
     partial class eDairyForm
     {

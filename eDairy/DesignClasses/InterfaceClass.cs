@@ -8,6 +8,16 @@ namespace eDairy.DesignClasses
 {
     public class InterfaceClass
     {
+
+        public static void PrintRecord(Records record, TextBox name, RichTextBox text, 
+            TextBox created_data, TextBox updated_data)
+        {
+            name.Text = record.Name;
+            text.Text = record.Text;
+            created_data.Text = record.CreatedAt;
+            updated_data.Text = record.UpdatedAt;
+        }
+
         public static void OpenDairyRecord(int width, DataGridView grid, Panel panel, 
             TextBox textname, RichTextBox text, bool isRecordReadOnly)
         {

@@ -34,5 +34,11 @@ namespace eDairy.DesignClasses
             textbox.Width = width / 2 - 21;
             textbox.Height = height - 90;
         }
+
+        public static void DataGridUpdater(List<Records> eRecords, DataGridView eDairyStorage)
+        {
+            foreach (Records record in eRecords)
+            { eDairyStorage.Rows.Add(record.Name); }
+        }
     }
 }
