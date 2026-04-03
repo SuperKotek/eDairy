@@ -1,4 +1,5 @@
-﻿using System;
+﻿using eDairy.FunctionalClasses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,6 +17,15 @@ namespace eDairy.DesignClasses
             text.Text = record.Text;
             created_data.Text = record.CreatedAt;
             updated_data.Text = record.UpdatedAt;
+        }
+
+        public static void ClearRecordPanel(TextBox name, RichTextBox text,
+            TextBox created_data, TextBox updated_data)
+        {
+            name.Text = "";
+            text.Text = "";
+            created_data.Text = DateOnly.FromDateTime(DateTime.Now).ToString();
+            updated_data.Text = DateOnly.FromDateTime(DateTime.Now).ToString();
         }
 
         public static void OpenDairyRecord(int width, DataGridView grid, Panel panel, 
@@ -42,10 +52,30 @@ namespace eDairy.DesignClasses
             grid.Width = width - 42;
             grid.Location = new Point(12, 31);
         }
-
-        public static void RecordButtonClick()
+        
+        public static void DataGridUpdater(eDairyScapegoat eRecords, DataGridView grid)
         {
+            grid.Rows.Clear();
+            foreach (string name in eRecords.GetAllNames())
+            { grid.Rows.Add(name); }
+        }
 
+        // Функции кнопки подтверждения
+
+        public static void CreateRecord(eDairyScapegoat eRecords, DataGridView grid,
+            TextBox name, RichTextBox text)
+        {
+            Records record = new Records
+            {
+                ID = grid.Rows.Count,
+                Name = name.Text,
+                Text = text.Text,
+                CreatedAt = DateOnly.FromDateTime(DateTime.Now).ToString(),
+                UpdatedAt = DateOnly.FromDateTime(DateTime.Now).ToString()
+            };
+            EdairyDBConnection.InsertIntoExcel(record);
+            eRecords.Insert(record);
+            grid.Rows.Add(record.Name);
         }
     }
 }

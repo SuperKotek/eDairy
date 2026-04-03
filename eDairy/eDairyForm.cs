@@ -1,5 +1,8 @@
 using eDairy.DesignClasses;
 using eDairy.FunctionalClasses;
+using System.Windows.Forms;
+using static System.Net.Mime.MediaTypeNames;
+using System.Xml.Linq;
 
 namespace eDairy
 {
@@ -10,7 +13,8 @@ namespace eDairy
         bool isPanelOpnd;
         bool isRecordReadOnly = false;
         int buttonfunction;
-        List<Records> eRecords;
+        int recordIndex = -1;
+
         eDairyScapegoat eDairyDS = new eDairyScapegoat();
 
         public eDairyForm()
@@ -22,10 +26,8 @@ namespace eDairy
             isPanelOpnd = false;
             buttonfunction = 0;
 
-            eRecords = EdairyDBConnection.ReadFromExcel();
-            foreach (Records record in eRecords)
-            { eDairyDS.Insert(record); }
-            DesignHelper.DataGridUpdater(eRecords, eDairyStorage);
+            eDairyDS = EdairyDBConnection.ReadFromExcel();
+            InterfaceClass.DataGridUpdater(eDairyDS, eDairyStorage);
 
             eDairyStorage.Columns[0].Width = eDairyStorage.Width;
 
@@ -34,9 +36,10 @@ namespace eDairy
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            int index = eDairyStorage.CurrentCell.RowIndex;
-            eDairyScapegoat scapegoat = new eDairyScapegoat();
-            Records record = scapegoat.Search(index);
+            isRecordReadOnly = true;
+            recordIndex = eDairyStorage.CurrentCell.RowIndex;
+            Records record = eDairyDS.SearchById(recordIndex);
+            OpenPanel();
             InterfaceClass.PrintRecord(record, RecordNameTxtBox, RecordTxtBox, RecordCreateDataTxtBox, RecordChangeDataTxtBox);
         }
 
@@ -68,18 +71,24 @@ namespace eDairy
         private void создатьЗаписьToolStripMenuItem_Click(object sender, EventArgs e)
         {
             buttonfunction = 1;
-            if (!isPanelOpnd)
-            {
-                isPanelOpnd = true;
-                InterfaceClass.OpenDairyRecord(width, eDairyStorage, eDairyRecordPanel, RecordNameTxtBox,
-                    RecordTxtBox, isRecordReadOnly);
-                DesignHelper.DataGridPanelOpenFix(width, height, eDairyStorage, eDairyRecordPanel);
-            }
+            isRecordReadOnly = false;
+            InterfaceClass.ClearRecordPanel(RecordNameTxtBox, RecordTxtBox, RecordCreateDataTxtBox, RecordChangeDataTxtBox);
+            OpenPanel();
         }
 
         private void удалитьЗаписьToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            if (recordIndex >= 0)
+            {
+                Records record = eDairyDS.SearchById(recordIndex);
+                DeleteForm deleteForm = new DeleteForm(record);
+                if (deleteForm.ShowDialog() == DialogResult.OK)
+                {
+                    eDairyDS.Delete(recordIndex);
+                }
+            }
+            else
+            { MessageBox.Show("Выберите запись для удаления!"); }
         }
 
         private void mainButton_Click(object sender, EventArgs e)
@@ -89,16 +98,7 @@ namespace eDairy
                 // Создание записи
                 case 1:
                     {
-                        Records record = new Records
-                        {
-                            Id = eRecords.Count+1,
-                            Name = RecordNameTxtBox.Text,
-                            Text = RecordTxtBox.Text,
-                            CreatedAt = DateOnly.FromDateTime(DateTime.Now).ToString(),
-                            UpdatedAt = DateOnly.FromDateTime(DateTime.Now).ToString()
-                        };
-                        EdairyDBConnection.InsertIntoExcel(record);
-                        eDairyStorage.Rows.Add(record.Name);
+                        InterfaceClass.CreateRecord(eDairyDS, eDairyStorage, RecordNameTxtBox, RecordTxtBox);
                         break;
                     }
                 // Изменение записи
@@ -110,6 +110,42 @@ namespace eDairy
                     {
                         break;
                     }
+            }
+            buttonfunction = 0;
+        }
+
+
+
+        private void OpenPanel()
+        {
+            if (!isPanelOpnd)
+            {
+                isPanelOpnd = true;
+                InterfaceClass.OpenDairyRecord(width, eDairyStorage, eDairyRecordPanel, RecordNameTxtBox,
+                    RecordTxtBox, isRecordReadOnly);
+                DesignHelper.DataGridPanelOpenFix(width, height, eDairyStorage, eDairyRecordPanel);
+            }
+            if (isRecordReadOnly)
+            {
+                RecordNameTxtBox.ReadOnly = true;
+                RecordTxtBox.ReadOnly = true;
+                mainButton.Enabled = false;
+            }
+            else
+            {
+                RecordNameTxtBox.ReadOnly = false;
+                RecordTxtBox.ReadOnly = false;
+                mainButton.Enabled = true;
+            }
+        }
+
+        private void ClosePanel()
+        {
+            if (isPanelOpnd)
+            {
+                isPanelOpnd = false;
+                InterfaceClass.CloseDairyRecord(width, eDairyStorage, eDairyRecordPanel);
+                DesignHelper.DataGridPanelCloseFix(width, height, eDairyStorage);
             }
         }
     }

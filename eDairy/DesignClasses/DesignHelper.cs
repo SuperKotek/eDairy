@@ -1,4 +1,5 @@
-﻿using System;
+﻿using eDairy.FunctionalClasses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,7 @@ namespace eDairy.DesignClasses
         {
             grid.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             grid.Width = width - 42;
-            grid.Height = height - 90;
+            grid.Height = height - 80; 
             grid.Columns[0].Width = grid.Width;
         }
 
@@ -22,10 +23,10 @@ namespace eDairy.DesignClasses
         {
             grid.Anchor = AnchorStyles.Top;
             grid.Width = width / 2 - 21;
-            grid.Height = height - 90;
+            grid.Height = height - 80;
             grid.Columns[0].Width = grid.Width;
             panel.Width = width / 2 - 27;
-            panel.Height = height - 90;
+            panel.Height = height - 80;
         }
 
         public static void TextBoxFix(int width, int height, TextBox textbox)
@@ -33,12 +34,6 @@ namespace eDairy.DesignClasses
             textbox.Anchor = AnchorStyles.Top;
             textbox.Width = width / 2 - 21;
             textbox.Height = height - 90;
-        }
-
-        public static void DataGridUpdater(List<Records> eRecords, DataGridView eDairyStorage)
-        {
-            foreach (Records record in eRecords)
-            { eDairyStorage.Rows.Add(record.Name); }
         }
     }
 }

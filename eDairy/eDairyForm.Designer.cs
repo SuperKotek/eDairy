@@ -62,7 +62,8 @@ namespace eDairy
             menuStrip1.Items.AddRange(new ToolStripItem[] { панельРедактированияToolStripMenuItem, инструментарийToolStripMenuItem, сохранитьКакToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(876, 28);
+            menuStrip1.Padding = new Padding(5, 2, 0, 2);
+            menuStrip1.Size = new Size(768, 24);
             menuStrip1.TabIndex = 0;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -70,20 +71,20 @@ namespace eDairy
             // 
             панельРедактированияToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { открытьПанельToolStripMenuItem, закрытьПанельToolStripMenuItem });
             панельРедактированияToolStripMenuItem.Name = "панельРедактированияToolStripMenuItem";
-            панельРедактированияToolStripMenuItem.Size = new Size(194, 24);
+            панельРедактированияToolStripMenuItem.Size = new Size(152, 20);
             панельРедактированияToolStripMenuItem.Text = "Панель редактирования";
             // 
             // открытьПанельToolStripMenuItem
             // 
             открытьПанельToolStripMenuItem.Name = "открытьПанельToolStripMenuItem";
-            открытьПанельToolStripMenuItem.Size = new Size(204, 26);
+            открытьПанельToolStripMenuItem.Size = new Size(163, 22);
             открытьПанельToolStripMenuItem.Text = "Открыть панель";
             открытьПанельToolStripMenuItem.Click += открытьПанельToolStripMenuItem_Click;
             // 
             // закрытьПанельToolStripMenuItem
             // 
             закрытьПанельToolStripMenuItem.Name = "закрытьПанельToolStripMenuItem";
-            закрытьПанельToolStripMenuItem.Size = new Size(204, 26);
+            закрытьПанельToolStripMenuItem.Size = new Size(163, 22);
             закрытьПанельToolStripMenuItem.Text = "Закрыть панель";
             закрытьПанельToolStripMenuItem.Click += закрытьПанельToolStripMenuItem_Click;
             // 
@@ -91,40 +92,40 @@ namespace eDairy
             // 
             инструментарийToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { создатьЗаписьToolStripMenuItem, удалитьЗаписьToolStripMenuItem, найтиЗаписьToolStripMenuItem });
             инструментарийToolStripMenuItem.Name = "инструментарийToolStripMenuItem";
-            инструментарийToolStripMenuItem.Size = new Size(141, 24);
+            инструментарийToolStripMenuItem.Size = new Size(113, 20);
             инструментарийToolStripMenuItem.Text = "Инструментарий";
             // 
             // создатьЗаписьToolStripMenuItem
             // 
             создатьЗаписьToolStripMenuItem.Name = "создатьЗаписьToolStripMenuItem";
-            создатьЗаписьToolStripMenuItem.Size = new Size(200, 26);
+            создатьЗаписьToolStripMenuItem.Size = new Size(158, 22);
             создатьЗаписьToolStripMenuItem.Text = "Создать запись";
             создатьЗаписьToolStripMenuItem.Click += создатьЗаписьToolStripMenuItem_Click;
             // 
             // удалитьЗаписьToolStripMenuItem
             // 
             удалитьЗаписьToolStripMenuItem.Name = "удалитьЗаписьToolStripMenuItem";
-            удалитьЗаписьToolStripMenuItem.Size = new Size(200, 26);
+            удалитьЗаписьToolStripMenuItem.Size = new Size(158, 22);
             удалитьЗаписьToolStripMenuItem.Text = "Удалить запись";
             удалитьЗаписьToolStripMenuItem.Click += удалитьЗаписьToolStripMenuItem_Click;
             // 
             // найтиЗаписьToolStripMenuItem
             // 
             найтиЗаписьToolStripMenuItem.Name = "найтиЗаписьToolStripMenuItem";
-            найтиЗаписьToolStripMenuItem.Size = new Size(200, 26);
+            найтиЗаписьToolStripMenuItem.Size = new Size(158, 22);
             найтиЗаписьToolStripMenuItem.Text = "Найти запись";
             // 
             // сохранитьКакToolStripMenuItem
             // 
             сохранитьКакToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { текстовыйФайлToolStripMenuItem });
             сохранитьКакToolStripMenuItem.Name = "сохранитьКакToolStripMenuItem";
-            сохранитьКакToolStripMenuItem.Size = new Size(132, 24);
+            сохранитьКакToolStripMenuItem.Size = new Size(107, 20);
             сохранитьКакToolStripMenuItem.Text = "Сохранить как...";
             // 
             // текстовыйФайлToolStripMenuItem
             // 
             текстовыйФайлToolStripMenuItem.Name = "текстовыйФайлToolStripMenuItem";
-            текстовыйФайлToolStripMenuItem.Size = new Size(204, 26);
+            текстовыйФайлToolStripMenuItem.Size = new Size(165, 22);
             текстовыйФайлToolStripMenuItem.Text = "Текстовый файл";
             // 
             // DNotes
@@ -143,19 +144,21 @@ namespace eDairy
             eDairyStorage.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             eDairyStorage.ColumnHeadersVisible = false;
             eDairyStorage.Columns.AddRange(new DataGridViewColumn[] { DNotes });
-            eDairyStorage.Location = new Point(438, 31);
+            eDairyStorage.Location = new Point(386, 30);
+            eDairyStorage.Margin = new Padding(3, 2, 3, 2);
             eDairyStorage.Name = "eDairyStorage";
             eDairyStorage.ReadOnly = true;
             eDairyStorage.RowHeadersVisible = false;
             eDairyStorage.RowHeadersWidth = 51;
             eDairyStorage.ScrollBars = ScrollBars.None;
-            eDairyStorage.Size = new Size(426, 426);
+            eDairyStorage.Size = new Size(370, 317);
             eDairyStorage.TabIndex = 1;
             eDairyStorage.CellContentClick += dataGridView1_CellContentClick;
             // 
             // eDairyRecordPanel
             // 
             eDairyRecordPanel.BackColor = SystemColors.ActiveCaption;
+            eDairyRecordPanel.BorderStyle = BorderStyle.FixedSingle;
             eDairyRecordPanel.Controls.Add(mainButton);
             eDairyRecordPanel.Controls.Add(RecordTxtBox);
             eDairyRecordPanel.Controls.Add(RecordNameLabel);
@@ -164,30 +167,35 @@ namespace eDairy
             eDairyRecordPanel.Controls.Add(RecordChangeDataTxtBox);
             eDairyRecordPanel.Controls.Add(RecordCreateDataTxtBox);
             eDairyRecordPanel.Controls.Add(RecordNameTxtBox);
-            eDairyRecordPanel.Location = new Point(12, 31);
+            eDairyRecordPanel.Location = new Point(8, 30);
+            eDairyRecordPanel.Margin = new Padding(3, 2, 3, 2);
             eDairyRecordPanel.Name = "eDairyRecordPanel";
-            eDairyRecordPanel.Size = new Size(420, 426);
+            eDairyRecordPanel.Size = new Size(370, 317);
             eDairyRecordPanel.TabIndex = 2;
             eDairyRecordPanel.Visible = false;
             // 
             // mainButton
             // 
             mainButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            mainButton.BackColor = SystemColors.ButtonFace;
+            mainButton.FlatStyle = FlatStyle.Popup;
             mainButton.Font = new Font("Segoe UI", 10F);
-            mainButton.Location = new Point(13, 376);
+            mainButton.Location = new Point(11, 280);
+            mainButton.Margin = new Padding(3, 2, 3, 2);
             mainButton.Name = "mainButton";
-            mainButton.Size = new Size(394, 37);
+            mainButton.Size = new Size(346, 28);
             mainButton.TabIndex = 8;
             mainButton.Text = "Подтвердить";
-            mainButton.UseVisualStyleBackColor = true;
+            mainButton.UseVisualStyleBackColor = false;
             mainButton.Click += mainButton_Click;
             // 
             // RecordTxtBox
             // 
             RecordTxtBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            RecordTxtBox.Location = new Point(13, 73);
+            RecordTxtBox.Location = new Point(11, 57);
+            RecordTxtBox.Margin = new Padding(3, 2, 3, 2);
             RecordTxtBox.Name = "RecordTxtBox";
-            RecordTxtBox.Size = new Size(394, 234);
+            RecordTxtBox.Size = new Size(345, 168);
             RecordTxtBox.TabIndex = 7;
             RecordTxtBox.Text = "";
             // 
@@ -195,20 +203,20 @@ namespace eDairy
             // 
             RecordNameLabel.AutoSize = true;
             RecordNameLabel.Font = new Font("Segoe UI", 10F);
-            RecordNameLabel.Location = new Point(13, 11);
+            RecordNameLabel.Location = new Point(11, 8);
             RecordNameLabel.Name = "RecordNameLabel";
-            RecordNameLabel.Size = new Size(146, 23);
+            RecordNameLabel.Size = new Size(116, 19);
             RecordNameLabel.TabIndex = 6;
             RecordNameLabel.Text = "Название записи";
             // 
             // RecordChangeDataLabel
             // 
-            RecordChangeDataLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            RecordChangeDataLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             RecordChangeDataLabel.AutoSize = true;
             RecordChangeDataLabel.Font = new Font("Segoe UI", 10F);
-            RecordChangeDataLabel.Location = new Point(217, 310);
+            RecordChangeDataLabel.Location = new Point(190, 227);
             RecordChangeDataLabel.Name = "RecordChangeDataLabel";
-            RecordChangeDataLabel.Size = new Size(139, 23);
+            RecordChangeDataLabel.Size = new Size(112, 19);
             RecordChangeDataLabel.TabIndex = 5;
             RecordChangeDataLabel.Text = "Дата изменения";
             // 
@@ -217,9 +225,9 @@ namespace eDairy
             RecordCreateDataLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             RecordCreateDataLabel.AutoSize = true;
             RecordCreateDataLabel.Font = new Font("Segoe UI", 10F);
-            RecordCreateDataLabel.Location = new Point(13, 310);
+            RecordCreateDataLabel.Location = new Point(11, 227);
             RecordCreateDataLabel.Name = "RecordCreateDataLabel";
-            RecordCreateDataLabel.Size = new Size(125, 23);
+            RecordCreateDataLabel.Size = new Size(101, 19);
             RecordCreateDataLabel.TabIndex = 4;
             RecordCreateDataLabel.Text = "Дата создания";
             // 
@@ -227,41 +235,45 @@ namespace eDairy
             // 
             RecordChangeDataTxtBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             RecordChangeDataTxtBox.Font = new Font("Segoe UI", 12F);
-            RecordChangeDataTxtBox.Location = new Point(217, 336);
+            RecordChangeDataTxtBox.Location = new Point(190, 247);
+            RecordChangeDataTxtBox.Margin = new Padding(3, 2, 3, 2);
             RecordChangeDataTxtBox.Name = "RecordChangeDataTxtBox";
             RecordChangeDataTxtBox.ReadOnly = true;
-            RecordChangeDataTxtBox.Size = new Size(190, 34);
+            RecordChangeDataTxtBox.Size = new Size(167, 29);
             RecordChangeDataTxtBox.TabIndex = 3;
             // 
             // RecordCreateDataTxtBox
             // 
             RecordCreateDataTxtBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             RecordCreateDataTxtBox.Font = new Font("Segoe UI", 12F);
-            RecordCreateDataTxtBox.Location = new Point(13, 336);
+            RecordCreateDataTxtBox.Location = new Point(11, 247);
+            RecordCreateDataTxtBox.Margin = new Padding(3, 2, 3, 2);
             RecordCreateDataTxtBox.Name = "RecordCreateDataTxtBox";
             RecordCreateDataTxtBox.ReadOnly = true;
-            RecordCreateDataTxtBox.Size = new Size(190, 34);
+            RecordCreateDataTxtBox.Size = new Size(167, 29);
             RecordCreateDataTxtBox.TabIndex = 2;
             // 
             // RecordNameTxtBox
             // 
             RecordNameTxtBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             RecordNameTxtBox.Font = new Font("Segoe UI", 10F);
-            RecordNameTxtBox.Location = new Point(13, 37);
+            RecordNameTxtBox.Location = new Point(11, 28);
+            RecordNameTxtBox.Margin = new Padding(3, 2, 3, 2);
             RecordNameTxtBox.Name = "RecordNameTxtBox";
-            RecordNameTxtBox.Size = new Size(394, 30);
+            RecordNameTxtBox.Size = new Size(345, 25);
             RecordNameTxtBox.TabIndex = 0;
             // 
             // eDairyForm
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(876, 469);
+            ClientSize = new Size(768, 358);
             Controls.Add(eDairyStorage);
             Controls.Add(menuStrip1);
             Controls.Add(eDairyRecordPanel);
             MainMenuStrip = menuStrip1;
-            MinimumSize = new Size(894, 516);
+            Margin = new Padding(3, 2, 3, 2);
+            MinimumSize = new Size(784, 397);
             Name = "eDairyForm";
             Text = "E-Dairy";
             SizeChanged += eDairyForm_SizeChanged;

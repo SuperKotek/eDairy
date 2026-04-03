@@ -12,8 +12,7 @@ namespace eDairy.FunctionalClasses
         private class Node
         {
             public Records Data;
-            public Node Left;
-            public Node Right;
+            public Node Left, Right;
             public int Size;
 
             public Node(Records data)
@@ -23,222 +22,235 @@ namespace eDairy.FunctionalClasses
             }
         }
 
-        private static Node root;
+        private Node root;
         private readonly double alpha = 0.7;
+        private int totalNodes = 0;
+        private int maxNodes = 0;
 
+        // Сортировка по ID
         private int Compare(Records a, Records b)
         {
-            return string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase);
+            return a.ID.CompareTo(b.ID);
         }
-
-        // ===== ВСТАВКА =====
-        public void Insert(Records record)
-        {
-            root = Insert(root, record);
-        }
-
-        private Node Insert(Node node, Records record)
-        {
-            if (node == null)
-                return new Node(record);
-
-            if (Compare(record, node.Data) < 0)
-                node.Left = Insert(node.Left, record);
-            else
-                node.Right = Insert(node.Right, record); // дубликаты уходят вправо
-
-            UpdateSize(node);
-
-            if (!IsBalanced(node))
-                node = Rebuild(node);
-
-            return node;
-        }
-
-        // ===== ПОИСК ТОЧНОГО NAME =====
-        public List<Records> SearchByName(string name)
-        {
-            var result = new List<Records>();
-            SearchByName(root, result, name);
-            return result;
-        }
-
-        private void SearchByName(Node node, List<Records> list, string name)
-        {
-            if (node == null) return;
-
-            int cmp = string.Compare(name, node.Data.Name, StringComparison.OrdinalIgnoreCase);
-
-            if (cmp < 0)
-            {
-                SearchByName(node.Left, list, name);
-            }
-            else if (cmp > 0)
-            {
-                SearchByName(node.Right, list, name);
-            }
-            else
-            {
-                // нашли совпадение — но могут быть дубликаты справа
-                list.Add(node.Data);
-                SearchByName(node.Right, list, name);
-            }
-        }
-
-        // ===== ПОИСК ПО ДАТЕ СОЗДАНИЯ =====
-        public List<Records> SearchByCreatedDate(DateTime from, DateTime to)
-        {
-            var result = new List<Records>();
-            SearchByCreatedDate(root, result, from, to);
-            return result;
-        }
-
-        private void SearchByCreatedDate(Node node, List<Records> list, DateTime from, DateTime to)
-        {
-            if (node == null) return;
-
-            SearchByCreatedDate(node.Left, list, from, to);
-
-            if (node.Data.CreatedAt >= from && node.Data.CreatedAt <= to)
-                list.Add(node.Data);
-
-            SearchByCreatedDate(node.Right, list, from, to);
-        }
-
-        // ===== ПОИСК ПО ДАТЕ ИЗМЕНЕНИЯ =====
-        public List<Records> SearchByUpdatedDate(DateTime from, DateTime to)
-        {
-            var result = new List<Records>();
-            SearchByUpdatedDate(root, result, from, to);
-            return result;
-        }
-
-        private void SearchByUpdatedDate(Node node, List<Records> list, DateTime from, DateTime to)
-        {
-            if (node == null) return;
-
-            SearchByUpdatedDate(node.Left, list, from, to);
-
-            if (node.Data.UpdatedAt >= from && node.Data.UpdatedAt <= to)
-                list.Add(node.Data);
-
-            SearchByUpdatedDate(node.Right, list, from, to);
-        }
-
-        // ===== БАЛАНС =====
-        private bool IsBalanced(Node node)
-        {
-            return GetSize(node.Left) <= alpha * node.Size &&
-                   GetSize(node.Right) <= alpha * node.Size;
-        }
-
-        private Node Rebuild(Node node)
-        {
-            var nodes = new List<Node>();
-            Flatten(node, nodes);
-            return BuildBalanced(nodes, 0, nodes.Count - 1);
-        }
-
-        private void Flatten(Node node, List<Node> list)
-        {
-            if (node == null) return;
-
-            Flatten(node.Left, list);
-            list.Add(node);
-            Flatten(node.Right, list);
-        }
-
-        private Node BuildBalanced(List<Node> nodes, int start, int end)
-        {
-            if (start > end) return null;
-
-            int mid = (start + end) / 2;
-
-            var node = nodes[mid];
-            node.Left = BuildBalanced(nodes, start, mid - 1);
-            node.Right = BuildBalanced(nodes, mid + 1, end);
-
-            UpdateSize(node);
-            return node;
-        }
-
-        private void UpdateSize(Node node)
-        {
-            node.Size = 1 + GetSize(node.Left) + GetSize(node.Right);
-        }
-
-        private int GetSize(Node node)
-        {
-            return node?.Size ?? 0;
-        }
-        /*
-        private class Node
-        {
-            public Records Data;
-            public Node Left;
-            public Node Right;
-            public int Size;
-
-            public Node(Records data)
-            {
-                Data = data;
-                Size = 1;
-            }
-        }
-
-        private static Node root;
-        private readonly double alpha = 0.7;
 
         // Вставка
         public void Insert(Records record)
         {
-            root = Insert(root, record);
+            int depth = InsertAndGetDepth(record);
+            if (totalNodes > 0 && depth > Math.Log(totalNodes, 1.0 / alpha))
+            {
+                RebalanceFromScapegoat(record);
+            }
         }
 
-        private Node Insert(Node node, Records record)
+        private int InsertAndGetDepth(Records record)
         {
-            if (node == null)
-                return new Node(record);
+            Node newNode = new Node(record);
+            if (root == null)
+            {
+                root = newNode;
+                totalNodes = 1;
+                return 0;
+            }
 
-            if (record.Id < node.Data.Id)
-                node.Left = Insert(node.Left, record);
+            Node current = root;
+            int depth = 0;
+            while (true)
+            {
+                current.Size++;
+                depth++;
+                int cmp = record.ID.CompareTo(current.Data.ID);
+                if (cmp < 0)
+                {
+                    if (current.Left == null) { current.Left = newNode; break; }
+                    current = current.Left;
+                }
+                else if (cmp > 0)
+                {
+                    if (current.Right == null) { current.Right = newNode; break; }
+                    current = current.Right;
+                }
+                else
+                {
+                    // Если ID совпал, просто обновляем данные (зависит от твоей логики)
+                    current.Data = record;
+                    return -1; // Не увеличиваем глубину, перестройка не нужна
+                }
+            }
+            totalNodes++;
+            if (totalNodes > maxNodes) maxNodes = totalNodes;
+            return depth;
+        }
+
+        // Удаление
+        public bool Delete(int id)
+        {
+            bool deleted = false;
+            root = DeleteRecursive(root, id, ref deleted);
+
+            if (deleted)
+            {
+                totalNodes--;
+                // Если дерево стало слишком "дырявым" (узлов меньше, чем alpha * maxNodes)
+                // перестраиваем всё дерево целиком
+                if (totalNodes < alpha * maxNodes)
+                {
+                    root = Rebuild(root);
+                    maxNodes = totalNodes;
+                }
+            }
+            return deleted;
+        }
+
+        private Node DeleteRecursive(Node node, int id, ref bool deleted)
+        {
+            if (node is null) return null;
+
+            if (id < node.Data.ID)
+            {
+                node.Left = DeleteRecursive(node.Left, id, ref deleted);
+            }
+            else if (id > node.Data.ID)
+            {
+                node.Right = DeleteRecursive(node.Right, id, ref deleted);
+            }
             else
-                node.Right = Insert(node.Right, record);
+            {
+                // Узел найден
+                deleted = true;
+
+                // Случай 1 - Нет детей или только один ребенок
+                if (node.Left is null) return node.Right;
+                if (node.Right is null) return node.Left;
+
+                // Случай 2 - У узла два ребенка
+                // Ищем минимальный элемент в правом поддереве (преемник)
+                Node successor = GetMinNode(node.Right);
+                node.Data = successor.Data; // Копируем данные преемника в текущий узел
+
+                // Удаляем преемника из правого поддерева
+                bool dummy = false;
+                node.Right = DeleteRecursive(node.Right, successor.Data.ID, ref dummy);
+            }
 
             UpdateSize(node);
-
-            if (!IsBalanced(node))
-                node = Rebuild(node);
-
             return node;
         }
 
-        // Поиск по названию
+        private Node GetMinNode(Node node)
+        {
+            while (node.Left is not null) node = node.Left;
+            return node;
+        }
+
+        // Поиск по ID (O(log N))
+        public Records SearchById(int id)
+        {
+            Node current = root;
+            while (current != null)
+            {
+                if (id == current.Data.ID) return current.Data;
+                current = id < current.Data.ID ? current.Left : current.Right;
+            }
+            return null; // Не найдено
+        }
+
+        // Поиск по имени
         public List<Records> SearchByName(string name)
         {
-            var result = new List<Records>();
-            Traverse(root, result, name);
+            List<Records> result = new List<Records>();
+            TraverseAndFilter(root, r => string.Equals(r.Name, name, StringComparison.OrdinalIgnoreCase), result);
             return result;
         }
 
-        private void Traverse(Node node, List<Records> list, string name)
+        // Поиск по датам (С трансформацией строк)
+        public List<Records> SearchByCreatedDate(DateTime from, DateTime to)
+        {
+            List<Records> result = new List<Records>();
+            DateTime startDate = from.Date;
+            DateTime endDate = to.Date;
+
+            TraverseAndFilter(root, r =>
+            {
+                if (DateTime.TryParse(r.CreatedAt, out DateTime date))
+                    return date.Date >= startDate && date.Date <= endDate;
+                return false;
+            }, result);
+            return result;
+        }
+
+        public List<Records> SearchByUpdatedDate(DateTime from, DateTime to)
+        {
+            List<Records> result = new List<Records>();
+            DateTime startDate = from.Date;
+            DateTime endDate = to.Date;
+
+            TraverseAndFilter(root, r =>
+            {
+                if (DateTime.TryParse(r.UpdatedAt, out DateTime date))
+                    return date.Date >= startDate && date.Date <= endDate;
+                return false;
+            }, result);
+            return result;
+        }
+
+        // Универсальный метод обхода для фильтрации
+        private void TraverseAndFilter(Node node, Func<Records, bool> predicate, List<Records> result)
+        {
+            if (node == null) return;
+            TraverseAndFilter(node.Left, predicate, result);
+            if (predicate(node.Data)) result.Add(node.Data);
+            TraverseAndFilter(node.Right, predicate, result);
+        }
+
+        // Получение всех имен для вывода списка записей
+        public List<string> GetAllNames()
+        {
+            List<string> names = new List<string>();
+            FillNamesRecursive(root, names);
+            return names;
+        }
+
+        private void FillNamesRecursive(Node node, List<string> list)
         {
             if (node == null) return;
 
-            Traverse(node.Left, list, name);
+            // Рекурсивно идем влево
+            FillNamesRecursive(node.Left, list);
 
-            if (node.Data.Name.Contains(name, StringComparison.OrdinalIgnoreCase))
-                list.Add(node.Data);
+            // Добавляем имя текущего узла
+            list.Add(node.Data.Name);
 
-            Traverse(node.Right, list, name);
+            // Рекурсивно идем вправо
+            FillNamesRecursive(node.Right, list);
         }
 
-        // Логика scapegoat
-        private bool IsBalanced(Node node)
+        // Балансировка (Scapegoat логика)
+        private void RebalanceFromScapegoat(Records insertedData)
         {
-            return GetSize(node.Left) <= alpha * node.Size &&
-                   GetSize(node.Right) <= alpha * node.Size;
+            Node scapegoat = null;
+            Node parent = null;
+            Node curr = root;
+
+            while (curr != null && curr.Data.ID != insertedData.ID)
+            {
+                Node next = insertedData.ID < curr.Data.ID ? curr.Left : curr.Right;
+                if (!IsBalanced(curr)) scapegoat = curr;
+                if (next != scapegoat) parent = curr;
+                curr = next;
+            }
+
+            if (scapegoat != null)
+            {
+                Node newNode = Rebuild(scapegoat);
+                if (parent == null) root = newNode;
+                else if (parent.Left == scapegoat) parent.Left = newNode;
+                else parent.Right = newNode;
+            }
         }
+
+        private bool IsBalanced(Node node) =>
+            GetSize(node.Left) <= alpha * node.Size && GetSize(node.Right) <= alpha * node.Size;
 
         private Node Rebuild(Node node)
         {
@@ -250,7 +262,6 @@ namespace eDairy.FunctionalClasses
         private void Flatten(Node node, List<Node> list)
         {
             if (node == null) return;
-
             Flatten(node.Left, list);
             list.Add(node);
             Flatten(node.Right, list);
@@ -259,26 +270,15 @@ namespace eDairy.FunctionalClasses
         private Node BuildBalanced(List<Node> nodes, int start, int end)
         {
             if (start > end) return null;
-
             int mid = (start + end) / 2;
-
             var node = nodes[mid];
             node.Left = BuildBalanced(nodes, start, mid - 1);
             node.Right = BuildBalanced(nodes, mid + 1, end);
-
             UpdateSize(node);
             return node;
         }
 
-        private void UpdateSize(Node node)
-        {
-            node.Size = 1 + GetSize(node.Left) + GetSize(node.Right);
-        }
-
-        private int GetSize(Node node)
-        {
-            return node?.Size ?? 0;
-        }
-        */
+        private void UpdateSize(Node node) => node.Size = 1 + GetSize(node.Left) + GetSize(node.Right);
+        private int GetSize(Node node) => node?.Size ?? 0;
     }
 }
