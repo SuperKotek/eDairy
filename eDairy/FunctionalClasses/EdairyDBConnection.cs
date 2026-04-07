@@ -39,8 +39,8 @@ namespace eDairy.FunctionalClasses
                                 ID = int.Parse(reader["ID"].ToString()),
                                 Name = reader["Name"].ToString(),
                                 Text = reader["Text"].ToString(),
-                                CreatedAt = reader["Created_Data"].ToString(),
-                                UpdatedAt = reader["Updated_Data"].ToString()
+                                Created_Data = reader["Created_Data"].ToString(),
+                                Updated_Data = reader["Updated_Data"].ToString()
                             };
 
                             result.Insert(record);
@@ -94,8 +94,8 @@ namespace eDairy.FunctionalClasses
                         insCmd.Parameters.AddWithValue("?", record.ID);
                         insCmd.Parameters.AddWithValue("?", record.Name ?? "");
                         insCmd.Parameters.AddWithValue("?", record.Text ?? "");
-                        insCmd.Parameters.AddWithValue("?", record.CreatedAt ?? "");
-                        insCmd.Parameters.AddWithValue("?", record.UpdatedAt ?? "");
+                        insCmd.Parameters.AddWithValue("?", record.Created_Data ?? "");
+                        insCmd.Parameters.AddWithValue("?", record.Updated_Data ?? "");
 
                         insCmd.ExecuteNonQuery();
                     }

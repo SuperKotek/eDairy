@@ -56,6 +56,7 @@ namespace eDairy
             if (recordIndex >= 0)
             {
                 InterfaceClass.DeleteRecord(eDairyDS, eDairyStorage, recordIndex);
+                recordIndex = -1;
                 ClosePanel();
             }
             else
@@ -64,10 +65,12 @@ namespace eDairy
 
         private void изменитьЗаписьToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            buttonfunction = 2;
             if (recordIndex >= 0)
             {
-                
+                buttonfunction = 2;
+                isRecordReadOnly = false;
+                RecordUpdateDataTxtBox.Text = DateOnly.FromDateTime(DateTime.Now).ToString();
+                OpenPanel();
             }
             else
             { MessageBox.Show("Выберите запись для изменения!"); }
@@ -94,7 +97,16 @@ namespace eDairy
                 // Изменение записи
                 case 2:
                     {
-
+                        if (RecordNameTxtBox.Text == "")
+                        { MessageBox.Show("Запись должна иметь название!"); }
+                        else
+                        {
+                            if (RecordTxtBox.Text == "")
+                            { RecordTxtBox.Text = "-"; }
+                            InterfaceClass.UpdateRecord(eDairyDS, eDairyStorage, recordIndex, RecordNameTxtBox, RecordTxtBox);
+                        }
+                        isRecordReadOnly = true;
+                        OpenPanel();
                         break;
                     }
                 default:
@@ -145,8 +157,6 @@ namespace eDairy
                 InterfaceClass.CloseDairyRecord(width, eDairyStorage, eDairyRecordPanel);
                 DesignHelper.DataGridPanelCloseFix(width, height, eDairyStorage);
             }
-        }
-
-        
+        }        
     }
 }

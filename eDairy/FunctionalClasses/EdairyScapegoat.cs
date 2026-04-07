@@ -175,6 +175,29 @@ namespace eDairy.FunctionalClasses
             return node;
         }
 
+        public bool Update(int id, string newName, string newText, string newUpdateDate)
+        {
+            // 1. Ищем узел с нужным ID (стандартный поиск в BST)
+            Node current = root;
+            while (current != null)
+            {
+                if (id == current.Data.ID)
+                {
+                    // 2. Узел найден — обновляем только разрешенные поля
+                    current.Data.Name = newName;
+                    current.Data.Text = newText;
+                    current.Data.Updated_Data = newUpdateDate;
+
+                    return true; // Успешно обновлено
+                }
+
+                // Переходим к следующему узлу
+                current = id < current.Data.ID ? current.Left : current.Right;
+            }
+
+            return false; // Запись с таким ID не найдена
+        }
+
         // Поиск по ID (O(log N))
         public Records SearchById(int id)
         {
@@ -204,7 +227,7 @@ namespace eDairy.FunctionalClasses
 
             TraverseAndFilter(root, r =>
             {
-                if (DateTime.TryParse(r.CreatedAt, out DateTime date))
+                if (DateTime.TryParse(r.Created_Data, out DateTime date))
                     return date.Date >= startDate && date.Date <= endDate;
                 return false;
             }, result);
@@ -219,7 +242,7 @@ namespace eDairy.FunctionalClasses
 
             TraverseAndFilter(root, r =>
             {
-                if (DateTime.TryParse(r.UpdatedAt, out DateTime date))
+                if (DateTime.TryParse(r.Updated_Data, out DateTime date))
                     return date.Date >= startDate && date.Date <= endDate;
                 return false;
             }, result);
@@ -233,28 +256,6 @@ namespace eDairy.FunctionalClasses
             TraverseAndFilter(node.Left, predicate, result);
             if (predicate(node.Data)) result.Add(node.Data);
             TraverseAndFilter(node.Right, predicate, result);
-        }
-
-        // Получение всех имен для вывода списка записей
-        public List<string> GetAllNames()
-        {
-            List<string> names = new List<string>();
-            FillNamesRecursive(root, names);
-            return names;
-        }
-
-        private void FillNamesRecursive(Node node, List<string> list)
-        {
-            if (node == null) return;
-
-            // Рекурсивно идем влево
-            FillNamesRecursive(node.Left, list);
-
-            // Добавляем имя текущего узла
-            list.Add(node.Data.Name);
-
-            // Рекурсивно идем вправо
-            FillNamesRecursive(node.Right, list);
         }
 
         // Балансировка (Scapegoat логика)

@@ -15,8 +15,8 @@ namespace eDairy.DesignClasses
         {
             name.Text = record.Name;
             text.Text = record.Text;
-            created_data.Text = record.CreatedAt;
-            updated_data.Text = record.UpdatedAt;
+            created_data.Text = record.Created_Data;
+            updated_data.Text = record.Updated_Data;
         }
 
         public static void ClearRecordPanel(TextBox name, RichTextBox text,
@@ -70,8 +70,8 @@ namespace eDairy.DesignClasses
                 ID = eRecords.GetNextId(),
                 Name = name.Text,
                 Text = text.Text,
-                CreatedAt = DateOnly.FromDateTime(DateTime.Now).ToString(),
-                UpdatedAt = DateOnly.FromDateTime(DateTime.Now).ToString()
+                Created_Data = DateOnly.FromDateTime(DateTime.Now).ToString(),
+                Updated_Data = DateOnly.FromDateTime(DateTime.Now).ToString()
             };
             eRecords.Insert(record);
             EdairyDBConnection.SaveTreeToExcel(eRecords);
@@ -85,9 +85,20 @@ namespace eDairy.DesignClasses
             if (deleteForm.ShowDialog() == DialogResult.OK)
             {
                 eRecords.Delete(index);
-                InterfaceClass.DataGridUpdater(eRecords, grid);
                 EdairyDBConnection.SaveTreeToExcel(eRecords);
+                InterfaceClass.DataGridUpdater(eRecords, grid);
             }
+        }
+
+        public static void UpdateRecord(eDairyScapegoat eRecords, DataGridView grid, int index,
+            TextBox name, RichTextBox text)
+        {
+            string newName = name.Text;
+            string newText = text.Text;
+            string Updated_Data = DateOnly.FromDateTime(DateTime.Now).ToString();
+            eRecords.Update(index, newName, newText, Updated_Data);
+            EdairyDBConnection.SaveTreeToExcel(eRecords);
+            InterfaceClass.DataGridUpdater(eRecords, grid);
         }
     }
 }

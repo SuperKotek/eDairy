@@ -11,7 +11,7 @@ namespace eDairy.FunctionalClasses
         public int ID { get; set; }
         public string Name { get; set; }
         public string Text { get; set; }
-        public string CreatedAt { get; set; }
-        public string UpdatedAt { get; set; }
+        public string Created_Data { get; set; }
+        public string Updated_Data { get; set; }
     }
 }
