@@ -3,6 +3,7 @@ using eDairy.FunctionalClasses;
 using System.Windows.Forms;
 using static System.Net.Mime.MediaTypeNames;
 using System.Xml.Linq;
+using System;
 
 namespace eDairy
 {
@@ -29,18 +30,78 @@ namespace eDairy
             eDairyDS = EdairyDBConnection.ReadFromExcel();
             InterfaceClass.DataGridUpdater(eDairyDS, eDairyStorage);
 
-            eDairyStorage.Columns[0].Width = eDairyStorage.Width;
-
             DesignHelper.DataGridPanelCloseFix(width, height, eDairyStorage);
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            buttonfunction = 0;
             isRecordReadOnly = true;
-            recordIndex = eDairyStorage.CurrentCell.RowIndex;
+            recordIndex = (int)eDairyStorage.Rows[e.RowIndex].Cells[0].Value;
             Records record = eDairyDS.SearchById(recordIndex);
             OpenPanel();
-            InterfaceClass.PrintRecord(record, RecordNameTxtBox, RecordTxtBox, RecordCreateDataTxtBox, RecordChangeDataTxtBox);
+            InterfaceClass.PrintRecord(record, RecordNameTxtBox, RecordTxtBox, RecordCreateDataTxtBox, RecordUpdateDataTxtBox);
+        }
+
+        private void создатьЗаписьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            buttonfunction = 1;
+            isRecordReadOnly = false;
+            InterfaceClass.ClearRecordPanel(RecordNameTxtBox, RecordTxtBox, RecordCreateDataTxtBox, RecordUpdateDataTxtBox);
+            OpenPanel();
+        }
+
+        private void удалитьЗаписьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (recordIndex >= 0)
+            {
+                InterfaceClass.DeleteRecord(eDairyDS, eDairyStorage, recordIndex);
+                ClosePanel();
+            }
+            else
+            { MessageBox.Show("Выберите запись для удаления!"); }
+        }
+
+        private void изменитьЗаписьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            buttonfunction = 2;
+            if (recordIndex >= 0)
+            {
+                
+            }
+            else
+            { MessageBox.Show("Выберите запись для изменения!"); }
+        }
+
+        private void mainButton_Click(object sender, EventArgs e)
+        {
+            switch (buttonfunction)
+            {
+                // Создание записи
+                case 1:
+                    {
+                        if (RecordNameTxtBox.Text == "")
+                        { MessageBox.Show("Запись должна иметь название!"); }
+                        else
+                        {
+                            if (RecordTxtBox.Text == "")
+                            { RecordTxtBox.Text = "-"; }
+                            InterfaceClass.CreateRecord(eDairyDS, eDairyStorage, RecordNameTxtBox, RecordTxtBox);
+                            InterfaceClass.ClearRecordPanel(RecordNameTxtBox, RecordTxtBox, RecordCreateDataTxtBox, RecordUpdateDataTxtBox);
+                        }
+                        break;
+                    }
+                // Изменение записи
+                case 2:
+                    {
+
+                        break;
+                    }
+                default:
+                    {
+                        break;
+                    }
+            }
         }
 
         private void eDairyForm_SizeChanged(object sender, EventArgs e)
@@ -52,69 +113,6 @@ namespace eDairy
             else
             { DesignHelper.DataGridPanelCloseFix(width, height, eDairyStorage); }
         }
-
-        private void открытьПанельToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            isPanelOpnd = true;
-            InterfaceClass.OpenDairyRecord(width, eDairyStorage, eDairyRecordPanel, RecordNameTxtBox,
-                RecordTxtBox, isRecordReadOnly);
-            DesignHelper.DataGridPanelOpenFix(width, height, eDairyStorage, eDairyRecordPanel);
-        }
-
-        private void закрытьПанельToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            InterfaceClass.CloseDairyRecord(width, eDairyStorage, eDairyRecordPanel);
-            DesignHelper.DataGridPanelCloseFix(width, height, eDairyStorage);
-            isPanelOpnd = false;
-        }
-
-        private void создатьЗаписьToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            buttonfunction = 1;
-            isRecordReadOnly = false;
-            InterfaceClass.ClearRecordPanel(RecordNameTxtBox, RecordTxtBox, RecordCreateDataTxtBox, RecordChangeDataTxtBox);
-            OpenPanel();
-        }
-
-        private void удалитьЗаписьToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (recordIndex >= 0)
-            {
-                Records record = eDairyDS.SearchById(recordIndex);
-                DeleteForm deleteForm = new DeleteForm(record);
-                if (deleteForm.ShowDialog() == DialogResult.OK)
-                {
-                    eDairyDS.Delete(recordIndex);
-                }
-            }
-            else
-            { MessageBox.Show("Выберите запись для удаления!"); }
-        }
-
-        private void mainButton_Click(object sender, EventArgs e)
-        {
-            switch (buttonfunction)
-            {
-                // Создание записи
-                case 1:
-                    {
-                        InterfaceClass.CreateRecord(eDairyDS, eDairyStorage, RecordNameTxtBox, RecordTxtBox);
-                        break;
-                    }
-                // Изменение записи
-                case 2:
-                    {
-                        break;
-                    }
-                default:
-                    {
-                        break;
-                    }
-            }
-            buttonfunction = 0;
-        }
-
-
 
         private void OpenPanel()
         {
@@ -148,5 +146,7 @@ namespace eDairy
                 DesignHelper.DataGridPanelCloseFix(width, height, eDairyStorage);
             }
         }
+
+        
     }
 }

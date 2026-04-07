@@ -13,13 +13,15 @@ namespace eDairy.FunctionalClasses
     {
         private static string filePath = @"eDairyTable.xlsx";
         private static string sheetName = "table1";
+        private static string sheetNameFuse = "table2";
+        private static string GetConnString(string filePath) =>
+        $@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={filePath};Extended Properties=""Excel 12.0 Xml;HDR=YES;""";
 
         public static eDairyScapegoat ReadFromExcel()
         {
             eDairyScapegoat result = new eDairyScapegoat();
 
-            string connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={filePath};" +
-                $"Extended Properties='Excel 12.0 Xml;HDR=YES;'";
+            string connectionString = GetConnString(filePath);
 
             using (OleDbConnection connection = new OleDbConnection(connectionString))
             {
@@ -50,50 +52,53 @@ namespace eDairy.FunctionalClasses
             return result;
         }
 
-        public static void InsertIntoExcel(Records record)
+        public static void SaveTreeToExcel(eDairyScapegoat tree)
         {
-            string connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={filePath};" +
-                $"Extended Properties='Excel 12.0 Xml;HDR=YES;'";
-
-            using (OleDbConnection connection = new OleDbConnection(connectionString))
+            List<Records> allRecords = tree.GetAll();
+            try 
             {
-                connection.Open();
-
-                string query = @"INSERT INTO [" + sheetName + @"$] VALUES (ID, Name, Text, Created_Data, Updated_Data)";
-
-                using (OleDbCommand command = new OleDbCommand(query, connection))
+                if (File.Exists(filePath))
                 {
-                    command.Parameters.AddWithValue("ID", record.ID);
-                    command.Parameters.AddWithValue("Name", record.Name);
-                    command.Parameters.AddWithValue("Text", record.Text);
-                    command.Parameters.AddWithValue("Created_Data", record.CreatedAt);
-                    command.Parameters.AddWithValue("Updated_Data", record.UpdatedAt);
-
-                    command.ExecuteNonQuery();
+                    File.Delete(filePath);
                 }
+                SaveTreeFunction(allRecords, sheetName);
+            }
+            catch (Exception e)
+            {
+                SaveTreeFunction(allRecords, sheetNameFuse);
+                throw new Exception($"Возникла ошибка: {e.Message}. Восстановите сохраненную таблицу");
             }
         }
-
-        public static void DeleteFromExcel(Records record)
+        
+        private static void SaveTreeFunction(List<Records> allRecords, string sheet)
         {
-            string connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={filePath};" +
-                $"Extended Properties='Excel 12.0 Xml;HDR=YES;'";
+            string connectionString = GetConnString(filePath);
 
-            using (OleDbConnection connection = new OleDbConnection(connectionString))
+            using (OleDbConnection conn = new OleDbConnection(connectionString))
             {
-                connection.Open();
+                conn.Open();
 
-                string query = @"DELETE FROM [" + sheetName + @"$] VALUES (ID, Name, Text, Created_Data, Updated_Data)";
-
-                using (OleDbCommand command = new OleDbCommand(query, connection))
+                string createTableSql = "CREATE TABLE [" + sheet + "] ([Id] INT, [Name] LONGTEXT, [Text] LONGTEXT, " +
+                    "[Created_Data] VARCHAR(20), [Updated_Data] VARCHAR(20))";
+                using (OleDbCommand cmd = new OleDbCommand(createTableSql, conn))
                 {
-                    command.Parameters.AddWithValue("ID", record.ID);
-                    command.Parameters.AddWithValue("Name", record.Name);
-                    command.Parameters.AddWithValue("Text", record.Text);
-                    command.Parameters.AddWithValue("Created_Data", record.CreatedAt);
-                    command.Parameters.AddWithValue("Updated_Data", record.UpdatedAt);
+                    cmd.ExecuteNonQuery();
+                }
 
-                    command.ExecuteNonQuery();
+                foreach (Records record in allRecords)
+                {
+                    string insertSql = "INSERT INTO [" + sheet + "] ([Id], [Name], [Text], [Created_Data], " +
+                        "[Updated_Data]) VALUES (?, ?, ?, ?, ?)";
+                    using (OleDbCommand insCmd = new OleDbCommand(insertSql, conn))
+                    {
+                        insCmd.Parameters.AddWithValue("?", record.ID);
+                        insCmd.Parameters.AddWithValue("?", record.Name ?? "");
+                        insCmd.Parameters.AddWithValue("?", record.Text ?? "");
+                        insCmd.Parameters.AddWithValue("?", record.CreatedAt ?? "");
+                        insCmd.Parameters.AddWithValue("?", record.UpdatedAt ?? "");
+
+                        insCmd.ExecuteNonQuery();
+                    }
                 }
             }
         }

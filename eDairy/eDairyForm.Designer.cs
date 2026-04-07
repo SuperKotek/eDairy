@@ -31,16 +31,14 @@ namespace eDairy
         private void InitializeComponent()
         {
             menuStrip1 = new MenuStrip();
-            панельРедактированияToolStripMenuItem = new ToolStripMenuItem();
-            открытьПанельToolStripMenuItem = new ToolStripMenuItem();
-            закрытьПанельToolStripMenuItem = new ToolStripMenuItem();
             инструментарийToolStripMenuItem = new ToolStripMenuItem();
             создатьЗаписьToolStripMenuItem = new ToolStripMenuItem();
             удалитьЗаписьToolStripMenuItem = new ToolStripMenuItem();
+            изменитьЗаписьToolStripMenuItem = new ToolStripMenuItem();
             найтиЗаписьToolStripMenuItem = new ToolStripMenuItem();
-            сохранитьКакToolStripMenuItem = new ToolStripMenuItem();
+            создатьОтчетToolStripMenuItem = new ToolStripMenuItem();
             текстовыйФайлToolStripMenuItem = new ToolStripMenuItem();
-            DNotes = new DataGridViewButtonColumn();
+            справкаToolStripMenuItem = new ToolStripMenuItem();
             eDairyStorage = new DataGridView();
             eDairyRecordPanel = new Panel();
             mainButton = new Button();
@@ -48,9 +46,11 @@ namespace eDairy
             RecordNameLabel = new Label();
             RecordChangeDataLabel = new Label();
             RecordCreateDataLabel = new Label();
-            RecordChangeDataTxtBox = new TextBox();
+            RecordUpdateDataTxtBox = new TextBox();
             RecordCreateDataTxtBox = new TextBox();
             RecordNameTxtBox = new TextBox();
+            id = new DataGridViewTextBoxColumn();
+            DNotes = new DataGridViewButtonColumn();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)eDairyStorage).BeginInit();
             eDairyRecordPanel.SuspendLayout();
@@ -59,7 +59,7 @@ namespace eDairy
             // menuStrip1
             // 
             menuStrip1.ImageScalingSize = new Size(20, 20);
-            menuStrip1.Items.AddRange(new ToolStripItem[] { панельРедактированияToolStripMenuItem, инструментарийToolStripMenuItem, сохранитьКакToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { инструментарийToolStripMenuItem, создатьОтчетToolStripMenuItem, справкаToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Padding = new Padding(5, 2, 0, 2);
@@ -67,30 +67,9 @@ namespace eDairy
             menuStrip1.TabIndex = 0;
             menuStrip1.Text = "menuStrip1";
             // 
-            // панельРедактированияToolStripMenuItem
-            // 
-            панельРедактированияToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { открытьПанельToolStripMenuItem, закрытьПанельToolStripMenuItem });
-            панельРедактированияToolStripMenuItem.Name = "панельРедактированияToolStripMenuItem";
-            панельРедактированияToolStripMenuItem.Size = new Size(152, 20);
-            панельРедактированияToolStripMenuItem.Text = "Панель редактирования";
-            // 
-            // открытьПанельToolStripMenuItem
-            // 
-            открытьПанельToolStripMenuItem.Name = "открытьПанельToolStripMenuItem";
-            открытьПанельToolStripMenuItem.Size = new Size(163, 22);
-            открытьПанельToolStripMenuItem.Text = "Открыть панель";
-            открытьПанельToolStripMenuItem.Click += открытьПанельToolStripMenuItem_Click;
-            // 
-            // закрытьПанельToolStripMenuItem
-            // 
-            закрытьПанельToolStripMenuItem.Name = "закрытьПанельToolStripMenuItem";
-            закрытьПанельToolStripMenuItem.Size = new Size(163, 22);
-            закрытьПанельToolStripMenuItem.Text = "Закрыть панель";
-            закрытьПанельToolStripMenuItem.Click += закрытьПанельToolStripMenuItem_Click;
-            // 
             // инструментарийToolStripMenuItem
             // 
-            инструментарийToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { создатьЗаписьToolStripMenuItem, удалитьЗаписьToolStripMenuItem, найтиЗаписьToolStripMenuItem });
+            инструментарийToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { создатьЗаписьToolStripMenuItem, удалитьЗаписьToolStripMenuItem, изменитьЗаписьToolStripMenuItem, найтиЗаписьToolStripMenuItem });
             инструментарийToolStripMenuItem.Name = "инструментарийToolStripMenuItem";
             инструментарийToolStripMenuItem.Size = new Size(113, 20);
             инструментарийToolStripMenuItem.Text = "Инструментарий";
@@ -98,29 +77,36 @@ namespace eDairy
             // создатьЗаписьToolStripMenuItem
             // 
             создатьЗаписьToolStripMenuItem.Name = "создатьЗаписьToolStripMenuItem";
-            создатьЗаписьToolStripMenuItem.Size = new Size(158, 22);
+            создатьЗаписьToolStripMenuItem.Size = new Size(168, 22);
             создатьЗаписьToolStripMenuItem.Text = "Создать запись";
             создатьЗаписьToolStripMenuItem.Click += создатьЗаписьToolStripMenuItem_Click;
             // 
             // удалитьЗаписьToolStripMenuItem
             // 
             удалитьЗаписьToolStripMenuItem.Name = "удалитьЗаписьToolStripMenuItem";
-            удалитьЗаписьToolStripMenuItem.Size = new Size(158, 22);
+            удалитьЗаписьToolStripMenuItem.Size = new Size(168, 22);
             удалитьЗаписьToolStripMenuItem.Text = "Удалить запись";
             удалитьЗаписьToolStripMenuItem.Click += удалитьЗаписьToolStripMenuItem_Click;
+            // 
+            // изменитьЗаписьToolStripMenuItem
+            // 
+            изменитьЗаписьToolStripMenuItem.Name = "изменитьЗаписьToolStripMenuItem";
+            изменитьЗаписьToolStripMenuItem.Size = new Size(168, 22);
+            изменитьЗаписьToolStripMenuItem.Text = "Изменить запись";
+            изменитьЗаписьToolStripMenuItem.Click += изменитьЗаписьToolStripMenuItem_Click;
             // 
             // найтиЗаписьToolStripMenuItem
             // 
             найтиЗаписьToolStripMenuItem.Name = "найтиЗаписьToolStripMenuItem";
-            найтиЗаписьToolStripMenuItem.Size = new Size(158, 22);
+            найтиЗаписьToolStripMenuItem.Size = new Size(168, 22);
             найтиЗаписьToolStripMenuItem.Text = "Найти запись";
             // 
-            // сохранитьКакToolStripMenuItem
+            // создатьОтчетToolStripMenuItem
             // 
-            сохранитьКакToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { текстовыйФайлToolStripMenuItem });
-            сохранитьКакToolStripMenuItem.Name = "сохранитьКакToolStripMenuItem";
-            сохранитьКакToolStripMenuItem.Size = new Size(107, 20);
-            сохранитьКакToolStripMenuItem.Text = "Сохранить как...";
+            создатьОтчетToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { текстовыйФайлToolStripMenuItem });
+            создатьОтчетToolStripMenuItem.Name = "создатьОтчетToolStripMenuItem";
+            создатьОтчетToolStripMenuItem.Size = new Size(95, 20);
+            создатьОтчетToolStripMenuItem.Text = "Создать отчет";
             // 
             // текстовыйФайлToolStripMenuItem
             // 
@@ -128,14 +114,11 @@ namespace eDairy
             текстовыйФайлToolStripMenuItem.Size = new Size(165, 22);
             текстовыйФайлToolStripMenuItem.Text = "Текстовый файл";
             // 
-            // DNotes
+            // справкаToolStripMenuItem
             // 
-            DNotes.FlatStyle = FlatStyle.Flat;
-            DNotes.HeaderText = "Записи Электронного дневника:";
-            DNotes.MinimumWidth = 6;
-            DNotes.Name = "DNotes";
-            DNotes.ReadOnly = true;
-            DNotes.Width = 300;
+            справкаToolStripMenuItem.Name = "справкаToolStripMenuItem";
+            справкаToolStripMenuItem.Size = new Size(65, 20);
+            справкаToolStripMenuItem.Text = "Справка";
             // 
             // eDairyStorage
             // 
@@ -143,7 +126,7 @@ namespace eDairy
             eDairyStorage.AllowUserToDeleteRows = false;
             eDairyStorage.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             eDairyStorage.ColumnHeadersVisible = false;
-            eDairyStorage.Columns.AddRange(new DataGridViewColumn[] { DNotes });
+            eDairyStorage.Columns.AddRange(new DataGridViewColumn[] { id, DNotes });
             eDairyStorage.Location = new Point(386, 30);
             eDairyStorage.Margin = new Padding(3, 2, 3, 2);
             eDairyStorage.Name = "eDairyStorage";
@@ -164,7 +147,7 @@ namespace eDairy
             eDairyRecordPanel.Controls.Add(RecordNameLabel);
             eDairyRecordPanel.Controls.Add(RecordChangeDataLabel);
             eDairyRecordPanel.Controls.Add(RecordCreateDataLabel);
-            eDairyRecordPanel.Controls.Add(RecordChangeDataTxtBox);
+            eDairyRecordPanel.Controls.Add(RecordUpdateDataTxtBox);
             eDairyRecordPanel.Controls.Add(RecordCreateDataTxtBox);
             eDairyRecordPanel.Controls.Add(RecordNameTxtBox);
             eDairyRecordPanel.Location = new Point(8, 30);
@@ -231,16 +214,16 @@ namespace eDairy
             RecordCreateDataLabel.TabIndex = 4;
             RecordCreateDataLabel.Text = "Дата создания";
             // 
-            // RecordChangeDataTxtBox
+            // RecordUpdateDataTxtBox
             // 
-            RecordChangeDataTxtBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            RecordChangeDataTxtBox.Font = new Font("Segoe UI", 12F);
-            RecordChangeDataTxtBox.Location = new Point(190, 247);
-            RecordChangeDataTxtBox.Margin = new Padding(3, 2, 3, 2);
-            RecordChangeDataTxtBox.Name = "RecordChangeDataTxtBox";
-            RecordChangeDataTxtBox.ReadOnly = true;
-            RecordChangeDataTxtBox.Size = new Size(167, 29);
-            RecordChangeDataTxtBox.TabIndex = 3;
+            RecordUpdateDataTxtBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            RecordUpdateDataTxtBox.Font = new Font("Segoe UI", 12F);
+            RecordUpdateDataTxtBox.Location = new Point(190, 247);
+            RecordUpdateDataTxtBox.Margin = new Padding(3, 2, 3, 2);
+            RecordUpdateDataTxtBox.Name = "RecordUpdateDataTxtBox";
+            RecordUpdateDataTxtBox.ReadOnly = true;
+            RecordUpdateDataTxtBox.Size = new Size(167, 29);
+            RecordUpdateDataTxtBox.TabIndex = 3;
             // 
             // RecordCreateDataTxtBox
             // 
@@ -262,6 +245,22 @@ namespace eDairy
             RecordNameTxtBox.Name = "RecordNameTxtBox";
             RecordNameTxtBox.Size = new Size(345, 25);
             RecordNameTxtBox.TabIndex = 0;
+            // 
+            // id
+            // 
+            id.HeaderText = "id";
+            id.Name = "id";
+            id.ReadOnly = true;
+            id.Visible = false;
+            // 
+            // DNotes
+            // 
+            DNotes.FlatStyle = FlatStyle.Flat;
+            DNotes.HeaderText = "Записи Электронного дневника:";
+            DNotes.MinimumWidth = 6;
+            DNotes.Name = "DNotes";
+            DNotes.ReadOnly = true;
+            DNotes.Width = 300;
             // 
             // eDairyForm
             // 
@@ -290,24 +289,24 @@ namespace eDairy
 
         private MenuStrip menuStrip1;
         private ToolStripMenuItem инструментарийToolStripMenuItem;
-        private DataGridViewButtonColumn DNotes;
         private DataGridView eDairyStorage;
         private Panel eDairyRecordPanel;
         private TextBox RecordNameTxtBox;
-        private ToolStripMenuItem панельРедактированияToolStripMenuItem;
-        private ToolStripMenuItem открытьПанельToolStripMenuItem;
-        private ToolStripMenuItem закрытьПанельToolStripMenuItem;
         private ToolStripMenuItem создатьЗаписьToolStripMenuItem;
         private ToolStripMenuItem удалитьЗаписьToolStripMenuItem;
         private ToolStripMenuItem найтиЗаписьToolStripMenuItem;
-        private ToolStripMenuItem сохранитьКакToolStripMenuItem;
-        private ToolStripMenuItem текстовыйФайлToolStripMenuItem;
-        private TextBox RecordChangeDataTxtBox;
+        private TextBox RecordUpdateDataTxtBox;
         private TextBox RecordCreateDataTxtBox;
         private Label RecordChangeDataLabel;
         private Label RecordCreateDataLabel;
         private Label RecordNameLabel;
         private RichTextBox RecordTxtBox;
         private Button mainButton;
+        private ToolStripMenuItem изменитьЗаписьToolStripMenuItem;
+        private ToolStripMenuItem создатьОтчетToolStripMenuItem;
+        private ToolStripMenuItem текстовыйФайлToolStripMenuItem;
+        private ToolStripMenuItem справкаToolStripMenuItem;
+        private DataGridViewTextBoxColumn id;
+        private DataGridViewButtonColumn DNotes;
     }
 }

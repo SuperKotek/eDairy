@@ -56,26 +56,38 @@ namespace eDairy.DesignClasses
         public static void DataGridUpdater(eDairyScapegoat eRecords, DataGridView grid)
         {
             grid.Rows.Clear();
-            foreach (string name in eRecords.GetAllNames())
-            { grid.Rows.Add(name); }
+            foreach (Records record in eRecords.GetAll())
+            { grid.Rows.Add(record.ID, record.Name); }
         }
 
-        // Функции кнопки подтверждения
+        // Основные функции приложения
 
         public static void CreateRecord(eDairyScapegoat eRecords, DataGridView grid,
             TextBox name, RichTextBox text)
         {
             Records record = new Records
             {
-                ID = grid.Rows.Count,
+                ID = eRecords.GetNextId(),
                 Name = name.Text,
                 Text = text.Text,
                 CreatedAt = DateOnly.FromDateTime(DateTime.Now).ToString(),
                 UpdatedAt = DateOnly.FromDateTime(DateTime.Now).ToString()
             };
-            EdairyDBConnection.InsertIntoExcel(record);
             eRecords.Insert(record);
-            grid.Rows.Add(record.Name);
+            EdairyDBConnection.SaveTreeToExcel(eRecords);
+            grid.Rows.Add(record.ID, record.Name);
+        }
+
+        public static void DeleteRecord(eDairyScapegoat eRecords, DataGridView grid, int index)
+        {
+            Records record = eRecords.SearchById(index);
+            DeleteForm deleteForm = new DeleteForm(record);
+            if (deleteForm.ShowDialog() == DialogResult.OK)
+            {
+                eRecords.Delete(index);
+                InterfaceClass.DataGridUpdater(eRecords, grid);
+                EdairyDBConnection.SaveTreeToExcel(eRecords);
+            }
         }
     }
 }

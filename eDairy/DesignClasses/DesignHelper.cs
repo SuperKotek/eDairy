@@ -16,7 +16,7 @@ namespace eDairy.DesignClasses
             grid.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             grid.Width = width - 42;
             grid.Height = height - 80; 
-            grid.Columns[0].Width = grid.Width;
+            grid.Columns[1].Width = grid.Width;
         }
 
         public static void DataGridPanelOpenFix(int width, int height, DataGridView grid, Panel panel)
@@ -24,7 +24,7 @@ namespace eDairy.DesignClasses
             grid.Anchor = AnchorStyles.Top;
             grid.Width = width / 2 - 21;
             grid.Height = height - 80;
-            grid.Columns[0].Width = grid.Width;
+            grid.Columns[1].Width = grid.Width;
             panel.Width = width / 2 - 27;
             panel.Height = height - 80;
         }

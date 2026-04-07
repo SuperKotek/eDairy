@@ -32,6 +32,38 @@ namespace eDairy.FunctionalClasses
         {
             return a.ID.CompareTo(b.ID);
         }
+        // Получение следующего Id для новой записи
+        public int GetNextId()
+        {
+            if (root == null) return 1;
+
+            Node current = root;
+            while (current.Right != null)
+                current = current.Right;
+
+            return current.Data.ID + 1;
+        }
+
+        public List<Records> GetAll()
+        {
+            var list = new List<Records>();
+            FillListRecursive(root, list);
+            return list;
+        }
+
+        private void FillListRecursive(Node node, List<Records> list)
+        {
+            if (node is null) return;
+
+            // 1. Сначала идем в левое поддерево (там меньшие ID)
+            FillListRecursive(node.Left, list);
+
+            // 2. Добавляем текущий узел
+            list.Add(node.Data);
+
+            // 3. Затем идем в правое поддерево (там большие ID)
+            FillListRecursive(node.Right, list);
+        }
 
         // Вставка
         public void Insert(Records record)
