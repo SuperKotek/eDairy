@@ -12,9 +12,11 @@ namespace eDairy
         int width;
         int height;
         bool isPanelOpnd;
+        bool isSearchPanelOpnd;
         bool isRecordReadOnly = false;
         int buttonfunction;
         int recordIndex = -1;
+        bool whichDate = false;
 
         eDairyScapegoat eDairyDS = new eDairyScapegoat();
 
@@ -25,12 +27,13 @@ namespace eDairy
             width = this.Width;
             height = this.Height;
             isPanelOpnd = false;
+            isSearchPanelOpnd = false;
             buttonfunction = 0;
 
             eDairyDS = EdairyDBConnection.ReadFromExcel();
             InterfaceClass.DataGridUpdater(eDairyDS, eDairyStorage);
 
-            DesignHelper.DataGridPanelCloseFix(width, height, eDairyStorage);
+            DesignHelper.DataGridPanelCloseFix(width, height, eDairyStorage, isSearchPanelOpnd);
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -116,14 +119,72 @@ namespace eDairy
             }
         }
 
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            isSearchPanelOpnd = InterfaceClass.SearchPanel(width, height, isSearchPanelOpnd, eDairyStorage,
+                            eDairyRecordPanel, eDairySearchNamePanel, eDairySearchDatePanel);
+        }
+
+        private void датеСозданияToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            isSearchPanelOpnd = InterfaceClass.SearchPanel(width, height, isSearchPanelOpnd, eDairyStorage, 
+                eDairyRecordPanel, eDairySearchDatePanel, eDairySearchNamePanel);
+            whichDate = false;
+        }
+
+        private void датеИзмененияToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            isSearchPanelOpnd = InterfaceClass.SearchPanel(width, height, isSearchPanelOpnd, eDairyStorage,
+                eDairyRecordPanel, eDairySearchDatePanel, eDairySearchNamePanel);
+            whichDate = true;
+        }
+
+        private void SearchNameButton_Click(object sender, EventArgs e)
+        {
+            string recordname = SearchTxtBox.Text;
+            InterfaceClass.SearchNameRecord(eDairyDS, eDairyStorage, recordname);
+        }
+
+        private void SearchNameButton1_Click(object sender, EventArgs e)
+        {
+            DesignHelper.SearchPanelCloseFix(width, height, eDairyStorage, eDairyRecordPanel, eDairySearchNamePanel);
+            InterfaceClass.DataGridUpdater(eDairyDS, eDairyStorage);
+            isSearchPanelOpnd = false;
+        }
+
+        private void SearchDataButton_Click(object sender, EventArgs e)
+        {
+            if (!whichDate)
+            {
+                // По дате создания
+                DateTime datafrom = SearchDateTimePicker1.Value;
+                DateTime datato = SearchDateTimePicker2.Value;
+                InterfaceClass.SearchCreatedDateRecord(eDairyDS, eDairyStorage, datafrom, datato);
+            }
+            else
+            {
+                // По дате изменения
+                DateTime datafrom = SearchDateTimePicker1.Value;
+                DateTime datato = SearchDateTimePicker2.Value;
+                InterfaceClass.SearchUpdatedDateRecord(eDairyDS, eDairyStorage, datafrom, datato);
+            }
+        }
+
+        private void SearchDataButton1_Click(object sender, EventArgs e)
+        {
+            DesignHelper.SearchPanelCloseFix(width, height, eDairyStorage, eDairyRecordPanel, eDairySearchDatePanel);
+            InterfaceClass.DataGridUpdater(eDairyDS, eDairyStorage);
+            isSearchPanelOpnd = false;
+        }
+
         private void eDairyForm_SizeChanged(object sender, EventArgs e)
         {
             width = this.Width;
             height = this.Height;
             if (isPanelOpnd)
-            { DesignHelper.DataGridPanelOpenFix(width, height, eDairyStorage, eDairyRecordPanel); }
+            { DesignHelper.DataGridPanelOpenFix(width, height, eDairyStorage, eDairyRecordPanel, isSearchPanelOpnd); }
             else
-            { DesignHelper.DataGridPanelCloseFix(width, height, eDairyStorage); }
+            { DesignHelper.DataGridPanelCloseFix(width, height, eDairyStorage, isSearchPanelOpnd); }
         }
 
         private void OpenPanel()
@@ -133,7 +194,7 @@ namespace eDairy
                 isPanelOpnd = true;
                 InterfaceClass.OpenDairyRecord(width, eDairyStorage, eDairyRecordPanel, RecordNameTxtBox,
                     RecordTxtBox, isRecordReadOnly);
-                DesignHelper.DataGridPanelOpenFix(width, height, eDairyStorage, eDairyRecordPanel);
+                DesignHelper.DataGridPanelOpenFix(width, height, eDairyStorage, eDairyRecordPanel, isSearchPanelOpnd);
             }
             if (isRecordReadOnly)
             {
@@ -155,8 +216,8 @@ namespace eDairy
             {
                 isPanelOpnd = false;
                 InterfaceClass.CloseDairyRecord(width, eDairyStorage, eDairyRecordPanel);
-                DesignHelper.DataGridPanelCloseFix(width, height, eDairyStorage);
+                DesignHelper.DataGridPanelCloseFix(width, height, eDairyStorage, isSearchPanelOpnd);
             }
-        }        
+        }
     }
 }

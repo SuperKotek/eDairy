@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace eDairy.DesignClasses
 {
@@ -99,6 +101,46 @@ namespace eDairy.DesignClasses
             eRecords.Update(index, newName, newText, Updated_Data);
             EdairyDBConnection.SaveTreeToExcel(eRecords);
             InterfaceClass.DataGridUpdater(eRecords, grid);
+        }
+
+        public static void SearchNameRecord(eDairyScapegoat eRecords, DataGridView grid, string name)
+        {
+            List<Records> list = eRecords.SearchByName(name);
+            grid.Rows.Clear();
+            foreach (Records record in list)
+            { grid.Rows.Add(record.ID, record.Name); }
+        }
+
+        public static void SearchCreatedDateRecord(eDairyScapegoat eRecords, DataGridView grid, DateTime from, DateTime to)
+        {
+            List<Records> list = eRecords.SearchByCreatedDate(from, to);
+            grid.Rows.Clear();
+            foreach (Records record in list)
+            { grid.Rows.Add(record.ID, record.Name); }
+        }
+
+        public static void SearchUpdatedDateRecord(eDairyScapegoat eRecords, DataGridView grid, DateTime from, DateTime to)
+        {
+            List<Records> list = eRecords.SearchByUpdatedDate(from, to);
+            grid.Rows.Clear();
+            foreach (Records record in list)
+            { grid.Rows.Add(record.ID, record.Name); }
+        }
+
+        public static bool SearchPanel(int width, int height, bool isSearchPanelOpnd, 
+            DataGridView grid, Panel panel, Panel searchpanel1, Panel searchpanel2)
+        {
+            if (!isSearchPanelOpnd)
+            {
+                DesignHelper.SearchPanelOpenFix(width, height, grid, panel, searchpanel1);
+                isSearchPanelOpnd = true;
+            }
+            else
+            {
+                searchpanel2.Visible = false;
+                DesignHelper.SearchPanelOpenFix(width, height, grid, panel, searchpanel1);
+            }
+            return isSearchPanelOpnd;
         }
     }
 }
